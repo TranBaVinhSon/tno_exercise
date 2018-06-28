@@ -2,24 +2,33 @@ package servers
 
 import (
 	"context"
-	"github.com/tnakade/tno_exercise/app/proto/services"
-	"math/rand"
-	"time"
+
+	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/shopspring/decimal"
+	"github.com/tnakade/tno_exercise/app/proto/services"
 )
 
 type Wallet struct {
+	client *rpcclient.Client
 }
 
-func NewWallet() *Wallet {
-	return &Wallet{}
+func NewWallet(client *rpcclient.Client) *Wallet {
+	wallet := &Wallet{}
+
+	wallet.client = client
+
+	return wallet
 }
 
 func (s *Wallet) GetBalance(ctx context.Context, msg *services.GetBalanceRequest) (*services.GetBalanceResponse, error) {
 	res := services.GetBalanceResponse{}
-	rand.Seed(time.Now().UnixNano())
-	amount := decimal.NewFromFloat(float64(rand.Intn(10000000)) / 1000000)
-	res.Balance = amount.StringFixed(8)
+
+	amount, err := s.client.GetBalance("client1")
+	if err != nil {
+		return &res, err
+	}
+
+	res.Balance = decimal.NewFromFloat(float64(amount) / 100000000).StringFixed(8)
 
 	return &res, nil
 }
