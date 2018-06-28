@@ -6,6 +6,8 @@
 - [service.proto](#service.proto)
     - [GetBalanceRequest](#services.GetBalanceRequest)
     - [GetBalanceResponse](#services.GetBalanceResponse)
+    - [SendCoinRequest](#services.SendCoinRequest)
+    - [SendCoinResponse](#services.SendCoinResponse)
   
   
   
@@ -52,6 +54,38 @@
 
 
 
+
+<a name="services.SendCoinRequest"/>
+
+### SendCoinRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| from_user_id | [uint64](#uint64) |  |  |
+| to_user_id | [uint64](#uint64) |  |  |
+| amount | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services.SendCoinResponse"/>
+
+### SendCoinResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| chain_hash | [string](#string) |  |  |
+
+
+
+
+
  
 
  
@@ -67,6 +101,7 @@
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | GetBalance | [GetBalanceRequest](#services.GetBalanceRequest) | [GetBalanceResponse](#services.GetBalanceRequest) | ログイン情報取得 |
+| SendCoin | [SendCoinRequest](#services.SendCoinRequest) | [SendCoinResponse](#services.SendCoinRequest) |  |
 
  
 
