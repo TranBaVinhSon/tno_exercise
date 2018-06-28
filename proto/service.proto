@@ -1,0 +1,17 @@
+syntax="proto3";
+
+package services;
+
+option go_package = "github.com/tnakade/tno_exercise/app/proto/services";
+
+service Wallet {
+    // ログイン情報取得
+    rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {}
+}
+
+message GetBalanceRequest {
+    uint64 user_id = 1; // ユーザーID
+}
+message GetBalanceResponse {
+    string balance = 1; // 残高
+}
