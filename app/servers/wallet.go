@@ -2,6 +2,8 @@ package servers
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 
 	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/btcsuite/btcutil"
@@ -29,7 +31,7 @@ func (s *Wallet) GetBalance(ctx context.Context, msg *services.GetBalanceRequest
 		return &res, err
 	}
 
-	res.Balance = decimal.NewFromFloat(float64(amount) / 100000000).StringFixed(8)
+	res.Balance = s.makeBTCString(int64(amount))
 
 	return &res, nil
 }
@@ -59,7 +61,34 @@ func (s *Wallet) SendCoin(ctx context.Context, msg *services.SendCoinRequest) (*
 		return &res, err
 	}
 
-	res.ChainHash = hash.String()
+	res.TransactionId = hash.String()
+
+	return &res, nil
+}
+
+func (s *Wallet) GetTransactions(ctx context.Context, msg *services.GetTransactionsRequest) (*services.GetTransactionsResponse, error) {
+	res := services.GetTransactionsResponse{}
+
+	transactions_result, err := s.client.ListTransactions(s.getAccount(msg.UserId))
+	if err != nil {
+		return &res, err
+	}
+
+	account_indexed_by_address := s.getAccountIndexedByAddress()
+	transactions := make([]*services.Transaction, len(transactions_result))
+
+	for i, transaction := range transactions_result {
+		transactions[i] = &services.Transaction{
+			Id:              transaction.TxID,
+			Category:        transaction.Category,
+			Abandoned:       strconv.FormatBool(transaction.Abandoned),
+			ReceivedAccount: account_indexed_by_address[transaction.Address],
+			ReceivedAddress: transaction.Address,
+			Amount:          fmt.Sprintf("%f", transaction.Amount),
+		}
+	}
+
+	res.Transactions = transactions
 
 	return &res, nil
 }
@@ -69,4 +98,30 @@ func (s *Wallet) getAccount(user_id uint64) string {
 		return "client1"
 	}
 	return "tno201806"
+}
+
+func (s *Wallet) getAccountIndexedByAddress() map[string]string {
+	account_indexed_by_address := make(map[string]string)
+
+	amount_indexed_by_account, err := s.client.ListAccounts()
+	if err != nil {
+		return account_indexed_by_address
+	}
+
+	for account, _ := range amount_indexed_by_account {
+		addresses, err := s.client.GetAddressesByAccount(account)
+		if err != nil {
+			continue
+		}
+
+		for _, address := range addresses {
+			account_indexed_by_address[address.String()] = account
+		}
+	}
+
+	return account_indexed_by_address
+}
+
+func (s *Wallet) makeBTCString(satoshi_amount int64) string {
+	return decimal.NewFromFloat(float64(satoshi_amount) / 100000000).StringFixed(8)
 }

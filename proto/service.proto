@@ -8,6 +8,7 @@ service Wallet {
     // ログイン情報取得
     rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {}
     rpc SendCoin(SendCoinRequest) returns (SendCoinResponse) {}
+    rpc GetTransactions(GetTransactionsRequest) returns (GetTransactionsResponse) {}
 }
 
 message GetBalanceRequest {
@@ -23,5 +24,21 @@ message SendCoinRequest {
     string amount = 3;
 }
 message SendCoinResponse {
-    string chain_hash = 1;
+    string transaction_id = 1;
+}
+
+message GetTransactionsRequest {
+    uint64 user_id = 1;
+}
+message GetTransactionsResponse {
+    repeated Transaction transactions = 1;
+}
+
+message Transaction {
+    string id = 1;
+    string category = 2;
+    string abandoned = 3;
+    string received_account = 4;
+    string received_address = 5;
+    string amount = 6;
 }
