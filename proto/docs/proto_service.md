@@ -11,6 +11,8 @@
     - [SendCoinRequest](#services.SendCoinRequest)
     - [SendCoinResponse](#services.SendCoinResponse)
     - [Transaction](#services.Transaction)
+    - [TransactionReceivedAddress](#services.TransactionReceivedAddress)
+    - [User](#services.User)
   
   
   
@@ -131,9 +133,43 @@
 | id | [string](#string) |  |  |
 | category | [string](#string) |  |  |
 | abandoned | [string](#string) |  |  |
-| received_account | [string](#string) |  |  |
-| received_address | [string](#string) |  |  |
+| received_address | [TransactionReceivedAddress](#services.TransactionReceivedAddress) |  |  |
 | amount | [string](#string) |  |  |
+| send_at | [string](#string) |  |  |
+| received_at | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services.TransactionReceivedAddress"/>
+
+### TransactionReceivedAddress
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  |  |
+| user | [User](#services.User) |  |  |
+
+
+
+
+
+
+<a name="services.User"/>
+
+### User
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  |  |
+| name | [string](#string) |  |  |
+| account | [string](#string) |  |  |
 
 
 

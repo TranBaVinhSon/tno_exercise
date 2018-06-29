@@ -38,7 +38,19 @@ message Transaction {
     string id = 1;
     string category = 2;
     string abandoned = 3;
-    string received_account = 4;
-    string received_address = 5;
-    string amount = 6;
+    TransactionReceivedAddress received_address = 4;
+    string amount = 5;
+    string send_at = 6;
+    string received_at = 7;
+}
+
+message TransactionReceivedAddress {
+    string id = 1;
+    User user = 2;
+}
+
+message User {
+    string id = 1;
+    string name = 2;
+    string account = 3;
 }

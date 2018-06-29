@@ -3,7 +3,9 @@ package servers
 import (
 	"context"
 	"fmt"
+	"math"
 	"strconv"
+	"time"
 
 	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/btcsuite/btcutil"
@@ -78,13 +80,24 @@ func (s *Wallet) GetTransactions(ctx context.Context, msg *services.GetTransacti
 	transactions := make([]*services.Transaction, len(transactions_result))
 
 	for i, transaction := range transactions_result {
+		account := account_indexed_by_address[transaction.Address]
+		user_id := s.getUserId(account)
+
 		transactions[i] = &services.Transaction{
-			Id:              transaction.TxID,
-			Category:        transaction.Category,
-			Abandoned:       strconv.FormatBool(transaction.Abandoned),
-			ReceivedAccount: account_indexed_by_address[transaction.Address],
-			ReceivedAddress: transaction.Address,
-			Amount:          fmt.Sprintf("%f", transaction.Amount),
+			Id:        transaction.TxID,
+			Category:  transaction.Category,
+			Abandoned: strconv.FormatBool(transaction.Abandoned),
+			ReceivedAddress: &services.TransactionReceivedAddress{
+				Id: transaction.Address,
+				User: &services.User{
+					Id:      fmt.Sprintf("%d", user_id),
+					Name:    s.getUserName(user_id),
+					Account: account,
+				},
+			},
+			Amount:     fmt.Sprintf("%f", math.Abs(transaction.Amount)),
+			SendAt:     time.Unix(transaction.Time, 0).String(),
+			ReceivedAt: time.Unix(transaction.TimeReceived, 0).String(),
 		}
 	}
 
@@ -98,6 +111,20 @@ func (s *Wallet) getAccount(user_id uint64) string {
 		return "client1"
 	}
 	return "tno201806"
+}
+
+func (s *Wallet) getUserId(account string) uint64 {
+	if account == "client1" {
+		return 1
+	}
+	return 2
+}
+
+func (s *Wallet) getUserName(user_id uint64) string {
+	if user_id == 1 {
+		return "玉井"
+	}
+	return "中出商会"
 }
 
 func (s *Wallet) getAccountIndexedByAddress() map[string]string {

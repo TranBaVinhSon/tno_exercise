@@ -42,13 +42,14 @@ func callGetTransactions(client services.WalletClient) {
 	}
 	for _, transaction := range res.Transactions {
 		log.Printf(
-			"Transaction: id[%s] category[%s] abandoned[%s] account[%s] address[%s] amount[%s]",
+			"Transaction: id[%s] category[%s] abandoned[%s] user[%s] address[%s] amount[%s] send_at[%s]",
 			transaction.Id,
 			transaction.Category,
 			transaction.Abandoned,
-			transaction.ReceivedAccount,
-			transaction.ReceivedAddress,
+			transaction.ReceivedAddress.User.Name,
+			transaction.ReceivedAddress.Id,
 			transaction.Amount,
+			transaction.SendAt,
 		)
 	}
 }
