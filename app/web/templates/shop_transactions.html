@@ -2,7 +2,7 @@
     <h2>取引履歴</h2>
     <ul>
         {{range $i, $v := .Transactions}}
-            <li>{{$v.Id}} {{$v.Category}} {{$v.Abandoned}} {{$v.ReceivedAccount}} {{$v.ReceivedAddress}} {{$v.Amount}}
+            <li>{{$v.Id}} {{$v.Category}} {{$v.Abandoned}} {{$v.ReceivedAddress.User.Name}} {{$v.Amount}} {{$v.SendAt}} {{$v.ReceivedAt}}
         {{end}}
     </ul>
 {{end}}
