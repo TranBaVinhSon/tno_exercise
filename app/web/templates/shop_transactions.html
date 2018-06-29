@@ -1,8 +1,22 @@
 {{define "content"}}
     <h2>取引履歴</h2>
-    <ul>
+    <table border="1">
+        <tr>
+            <th>日時</th>
+            <th>入出金</th>
+            <th>相手</th>
+            <th>金額</th>
+            <th>ID</th>
+        </tr>
+
         {{range $i, $v := .Transactions}}
-            <li>{{$v.Id}} {{$v.Category}} {{$v.Abandoned}} {{$v.ReceivedAddress.User.Name}} {{$v.Amount}} {{$v.SendAt}} {{$v.ReceivedAt}}
+            <tr>
+                <td>{{if eq $v.Category "receive"}}{{$v.SendAt}}{{else}}{{$v.ReceivedAt}}{{end}}</td>
+                <td>{{if eq $v.Category "receive"}}入金{{else}}出金{{end}}</td>
+                <td>{{$v.ReceivedAddress.User.Name}}</td>
+                <td>{{$v.Amount}}</td>
+                <td>{{$v.Id}}</td>
+            </tr>
         {{end}}
-    </ul>
+    </table>
 {{end}}

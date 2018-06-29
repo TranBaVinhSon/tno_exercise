@@ -16,6 +16,7 @@ import (
 	"github.com/boombuler/barcode/qr"
 	"github.com/boombuler/barcode"
 	"fmt"
+	"time"
 )
 
 var templates map[string]*template.Template
@@ -135,5 +136,16 @@ func ShopTransactionsPage(c echo.Context) error {
 		res.Transactions = []*services.Transaction{}
 		return c.Render(http.StatusOK, "shop_transactions", res)
 	}
+
+	inFormat := "2006-01-02 15:04:05 -0700 MST"
+	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+	outFormat := "2006-01-02 15:04:05"
+	for _, tr := range res.Transactions {
+		ra, _ := time.Parse(inFormat, tr.ReceivedAt)
+		sa, _ := time.Parse(inFormat, tr.SendAt)
+		tr.ReceivedAt = ra.In(jst).Format(outFormat)
+		tr.SendAt = sa.In(jst).Format(outFormat)
+	}
+
 	return c.Render(http.StatusOK, "shop_transactions", res)
 }
