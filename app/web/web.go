@@ -6,11 +6,16 @@ import (
 	"html/template"
 	"io"
 	"net/http"
-	"strconv"
 	"github.com/tnakade/tno_exercise/app/proto/services"
 	"log"
 	"google.golang.org/grpc"
 	"context"
+	"strconv"
+	"os"
+	"image/png"
+	"github.com/boombuler/barcode/qr"
+	"github.com/boombuler/barcode"
+	"fmt"
 )
 
 var templates map[string]*template.Template
@@ -42,10 +47,12 @@ func main() {
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 
+	e.Static("/public", "public")
+
 	// ルーティング
-	e.GET("/hello", HelloPage)
 	e.GET("/shops/:id", ShopPage)
 	e.GET("/shops/:id/balance", ShopBalancePage)
+	e.GET("/shops/:id/transactions", ShopTransactionsPage)
 
 	// サーバー起動
 	e.Start(":2080") //ポート番号指定してね
@@ -60,24 +67,53 @@ func init() {
 func loadTemplates() {
 	var baseTemplate = "templates/layout.html"
 	templates = make(map[string]*template.Template)
-	templates["hello"] = template.Must(template.ParseFiles(baseTemplate, "templates/hello.html"))
 	templates["shop"] = template.Must(template.ParseFiles(baseTemplate, "templates/shop.html"))
 	templates["shop_balance"] = template.Must(template.ParseFiles(baseTemplate, "templates/shop_balance.html"))
+	templates["shop_transactions"] = template.Must(template.ParseFiles(baseTemplate, "templates/shop_transactions.html"))
 }
 
-func HelloPage(c echo.Context) error {
-	greetingto := c.QueryParam("greetingto")
-	return c.Render(http.StatusOK, "hello", greetingto)
+func getId(c echo.Context) uint64 {
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return 0
+	}
+	return uint64(id)
+}
+
+func createShopQRCodeFilePath(id uint64) string {
+	return fmt.Sprintf("public/img/shop_%d.png", id)
+}
+
+func createShopQRCode(id uint64) {
+	qrCode, _ := qr.Encode(strconv.FormatUint(id, 10), qr.M, qr.Auto)
+
+	// Scale the barcode to 200x200 pixels
+	qrCode, _ = barcode.Scale(qrCode, 200, 200)
+
+	// create the output file
+	fileName := createShopQRCodeFilePath(id)
+	os.Remove(fileName)
+	file, _ := os.Create(fileName)
+	defer file.Close()
+
+	// encode the barcode as png
+	png.Encode(file, qrCode)
+}
+
+type ShopPageInfo struct {
+	Id uint64
+	Path string
 }
 
 func ShopPage(c echo.Context) error {
-	id, _ := strconv.Atoi(c.Param("id"))
-	return c.Render(http.StatusOK, "shop", id)
+	id := getId(c)
+	createShopQRCode(id)
+	info := ShopPageInfo{Id: id, Path: "/" + createShopQRCodeFilePath(id)}
+	return c.Render(http.StatusOK, "shop", info)
 }
 
 func ShopBalancePage(c echo.Context) error {
-	id, _ := strconv.Atoi(c.Param("id"))
-	log.Printf("", id)
+	id := getId(c)
 
 	req := services.GetBalanceRequest{UserId: uint64(id)}
 	res, err := client.GetBalance(context.Background(), &req)
@@ -86,4 +122,18 @@ func ShopBalancePage(c echo.Context) error {
 		return c.Render(http.StatusOK, "shop_balance", "0")
 	}
 	return c.Render(http.StatusOK, "shop_balance", res.Balance)
+}
+
+func ShopTransactionsPage(c echo.Context) error {
+	id := getId(c)
+
+	req := services.GetTransactionsRequest{UserId: id}
+	res, err := client.GetTransactions(context.Background(), &req)
+
+	if err != nil {
+		res := services.GetTransactionsResponse{}
+		res.Transactions = []*services.Transaction{}
+		return c.Render(http.StatusOK, "shop_transactions", res)
+	}
+	return c.Render(http.StatusOK, "shop_transactions", res)
 }
