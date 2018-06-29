@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math"
 	"strconv"
+	"time"
 
 	"github.com/btcsuite/btcd/rpcclient"
 	"github.com/btcsuite/btcutil"
@@ -95,8 +96,8 @@ func (s *Wallet) GetTransactions(ctx context.Context, msg *services.GetTransacti
 				},
 			},
 			Amount:     fmt.Sprintf("%f", math.Abs(transaction.Amount)),
-			SendAt:     fmt.Sprintf("%d", transaction.Time),
-			ReceivedAt: fmt.Sprintf("%d", transaction.TimeReceived),
+			SendAt:     time.Unix(transaction.Time, 0).String(),
+			ReceivedAt: time.Unix(transaction.TimeReceived, 0).String(),
 		}
 	}
 
