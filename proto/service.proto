@@ -7,6 +7,7 @@ option go_package = "github.com/tnakade/tno_exercise/app/proto/services";
 service Wallet {
     // ログイン情報取得
     rpc GetBalance(GetBalanceRequest) returns (GetBalanceResponse) {}
+    rpc SendCoin(SendCoinRequest) returns (SendCoinResponse) {}
 }
 
 message GetBalanceRequest {
@@ -14,4 +15,13 @@ message GetBalanceRequest {
 }
 message GetBalanceResponse {
     string balance = 1; // 残高
+}
+
+message SendCoinRequest {
+    uint64 from_user_id = 1;
+    uint64 to_user_id = 2;
+    string amount = 3;
+}
+message SendCoinResponse {
+    string chain_hash = 1;
 }
