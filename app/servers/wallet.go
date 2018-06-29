@@ -23,7 +23,7 @@ func NewWallet(client *rpcclient.Client) *Wallet {
 func (s *Wallet) GetBalance(ctx context.Context, msg *services.GetBalanceRequest) (*services.GetBalanceResponse, error) {
 	res := services.GetBalanceResponse{}
 
-	amount, err := s.client.GetBalance("client1")
+	amount, err := s.client.GetBalance(s.getAccount(msg.UserId))
 	if err != nil {
 		return &res, err
 	}
@@ -31,4 +31,11 @@ func (s *Wallet) GetBalance(ctx context.Context, msg *services.GetBalanceRequest
 	res.Balance = decimal.NewFromFloat(float64(amount) / 100000000).StringFixed(8)
 
 	return &res, nil
+}
+
+func (s *Wallet) getAccount(user_id uint64) string {
+	if user_id == 1 {
+		return "client1"
+	}
+	return "tno201806"
 }
