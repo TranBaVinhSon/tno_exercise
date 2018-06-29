@@ -6,8 +6,11 @@
 - [service.proto](#service.proto)
     - [GetBalanceRequest](#services.GetBalanceRequest)
     - [GetBalanceResponse](#services.GetBalanceResponse)
+    - [GetTransactionsRequest](#services.GetTransactionsRequest)
+    - [GetTransactionsResponse](#services.GetTransactionsResponse)
     - [SendCoinRequest](#services.SendCoinRequest)
     - [SendCoinResponse](#services.SendCoinResponse)
+    - [Transaction](#services.Transaction)
   
   
   
@@ -55,6 +58,36 @@
 
 
 
+<a name="services.GetTransactionsRequest"/>
+
+### GetTransactionsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services.GetTransactionsResponse"/>
+
+### GetTransactionsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| transactions | [Transaction](#services.Transaction) | repeated |  |
+
+
+
+
+
+
 <a name="services.SendCoinRequest"/>
 
 ### SendCoinRequest
@@ -80,7 +113,27 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| chain_hash | [string](#string) |  |  |
+| transaction_id | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="services.Transaction"/>
+
+### Transaction
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [string](#string) |  |  |
+| category | [string](#string) |  |  |
+| abandoned | [string](#string) |  |  |
+| received_account | [string](#string) |  |  |
+| received_address | [string](#string) |  |  |
+| amount | [string](#string) |  |  |
 
 
 
@@ -102,6 +155,7 @@
 | ----------- | ------------ | ------------- | ------------|
 | GetBalance | [GetBalanceRequest](#services.GetBalanceRequest) | [GetBalanceResponse](#services.GetBalanceRequest) | ログイン情報取得 |
 | SendCoin | [SendCoinRequest](#services.SendCoinRequest) | [SendCoinResponse](#services.SendCoinRequest) |  |
+| GetTransactions | [GetTransactionsRequest](#services.GetTransactionsRequest) | [GetTransactionsResponse](#services.GetTransactionsRequest) |  |
 
  
 
