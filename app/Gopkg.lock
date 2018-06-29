@@ -2,6 +2,16 @@
 
 
 [[projects]]
+  name = "github.com/boombuler/barcode"
+  packages = [
+    ".",
+    "qr",
+    "utils"
+  ]
+  revision = "3cfea5ab600ae37946be2b763b8ec2c1cf2d272d"
+  version = "v1.0.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/btcsuite/btcd"
   packages = [
@@ -202,6 +212,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "e156bfd21edda089cfdf8d223540693322545573ab7c88a5b43555476b5291b5"
+  inputs-digest = "0819c45048e49963b76a7552e78d6031fe653758b1bc8f2f82076dabbf2e9220"
   solver-name = "gps-cdcl"
   solver-version = 1
